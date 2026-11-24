@@ -205,6 +205,21 @@ body.panel .scrim{display:none}body.panel main{margin-left:400px;margin-right:0;
 .zk .an{font-size:.6em}
 details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--mute)}
 .dev{font-family:"Noto Kufi Arabic",sans-serif;font-weight:700;color:var(--gold,#b08d3e);white-space:nowrap}
+
+/* أحكام التجويد */
+.ay .tjx{display:none}
+#verses.tjon .ay .tjx{display:inline}#verses.tjon .ay .f,#verses.tjon .ay .rest{display:none}
+@media (hover:hover){#verses.tjhov .ay:hover .tjx{display:inline}#verses.tjhov .ay:hover .f,#verses.tjhov .ay:hover .rest{display:none}}
+:root{--tjGray:#9AA0A6;--tjM2:#537FFF;--tjMj:#4050FF;--tjMw:#2144C1;--tjMl:#000EBC;--tjQ:#DD0008;--tjIk:#9400A8;--tjIks:#D500B7;--tjIq:#1BA7E0;--tjIg:#169777;--tjIn:#169200;--tjIs:#58B800;--tjG:#FF7E1E}
+:root[data-read=night]{--tjM2:#7FA0FF;--tjMj:#7C88FF;--tjMw:#6C8CFF;--tjMl:#5B6CFF;--tjQ:#FF5A5F;--tjIk:#C77DFF;--tjIn:#4CC44C;--tjIg:#3BC4A0}
+@media (prefers-color-scheme:dark){:root:not([data-read]){--tjM2:#7FA0FF;--tjMj:#7C88FF;--tjMw:#6C8CFF;--tjMl:#5B6CFF;--tjQ:#FF5A5F;--tjIk:#C77DFF;--tjIn:#4CC44C;--tjIg:#3BC4A0}}
+.tj-ham_wasl,.tj-slnt,.tj-laam_shamsiyah,.tj-idgham_mutajanisayn,.tj-idgham_mutaqaribayn{color:var(--tjGray)}
+.tj-madda_normal{color:var(--tjM2)}.tj-madda_permissible{color:var(--tjMj)}.tj-madda_obligatory{color:var(--tjMw)}.tj-madda_necessary{color:var(--tjMl)}
+.tj-qalaqah{color:var(--tjQ)}.tj-ikhafa{color:var(--tjIk)}.tj-ikhafa_shafawi{color:var(--tjIks)}.tj-iqlab{color:var(--tjIq)}
+.tj-idgham_ghunnah{color:var(--tjIg)}.tj-idgham_wo_ghunnah{color:var(--tjIn)}.tj-idgham_shafawi{color:var(--tjIs)}.tj-ghunnah{color:var(--tjG)}
+#tjLeg{margin:6px 0 10px;font-size:13px}#tjLeg summary{cursor:pointer;color:var(--mute)}
+#tjLeg .lg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}#tjLeg .lg span{display:inline-flex;align-items:center;gap:6px}
+#tjLeg .lg i{width:12px;height:12px;border-radius:50%;display:inline-block;background:currentColor}
 </style>
 </head>
 <body>
@@ -254,10 +269,17 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
     </select>
     <button class="btn" id="hideBtn" aria-pressed="false">وضع التسميع</button>
     <button class="btn" id="themeBtn">لون الصفحة</button>
+    <button class="btn" id="tjBtn">التجويد</button>
   </div>
   <p class="muted" id="hideHint" hidden>الآيات مخفية ما عدا أول كلمة — اضغط على الآية لإظهارها بعد ما تسمّعها.</p>
+  <details id="tjLeg" hidden><summary>دليل ألوان أحكام التجويد</summary><div class="lg">
+<span class="tj-madda_necessary"><i></i>مد لازم ٦ حركات</span><span class="tj-madda_obligatory"><i></i>مد واجب ٤–٥</span><span class="tj-madda_permissible"><i></i>مد جائز ٢–٤–٦</span><span class="tj-madda_normal"><i></i>مد طبيعي حركتان</span>
+<span class="tj-ghunnah"><i></i>غنة</span><span class="tj-ikhafa"><i></i>إخفاء</span><span class="tj-ikhafa_shafawi"><i></i>إخفاء شفوي</span><span class="tj-iqlab"><i></i>إقلاب</span>
+<span class="tj-idgham_ghunnah"><i></i>إدغام بغنة</span><span class="tj-idgham_wo_ghunnah"><i></i>إدغام بلا غنة</span><span class="tj-idgham_shafawi"><i></i>إدغام شفوي</span>
+<span class="tj-qalaqah"><i></i>قلقلة</span><span class="tj-ham_wasl"><i></i>لا يُنطق (همزة وصل، لام شمسية…)</span>
+</div><p class="src" style="margin:6px 0 0">المصدر: بيانات أحكام التجويد من Quran.com</p></details>
   <div class="orn page">
-  <div class="qt" id="basm"></div>
+<div class="qt" id="basm"></div>
   <div class="qt flow" id="verses"></div>
   </div>
   <div class="row" style="justify-content:center;margin-top:24px"><button class="btn pri" id="nextS2">السورة التالية</button></div>
@@ -337,6 +359,7 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
   <div class="card" style="padding:4px 16px">
     <div class="sw2"><span>لون الصفحة</span><div class="seg" id="readSeg"><button data-k="auto">تلقائي</button><button data-k="light">فاتح</button><button data-k="sepia">ورقي</button><button data-k="night">ليلي</button></div></div>
     <div class="sw2"><span>حجم خط المصحف</span><div class="fsbox"><button class="btn" id="fsDn2" aria-label="تصغير خط المصحف">−</button><input type="range" id="fsRange2" min="16" max="48" step="1" aria-label="حجم خط المصحف"><button class="btn" id="fsUp2" aria-label="تكبير خط المصحف">+</button><span id="fsVal2"></span></div></div>
+    <div class="sw2"><span>ألوان أحكام التجويد</span><div class="seg" id="tjSeg"><button data-k="off">إخفاء</button><button data-k="on">إظهار</button><button data-k="hover" class="hovOnly">عند مرور الماوس</button></div></div>
     <div class="sw2" id="wRow" hidden><span>شكل الويدجت</span><div class="seg" id="wSeg"><button data-k="solid">معتم</button><button data-k="glass">نصف شفاف</button><button data-k="clear">شفاف</button></div></div>
     <div class="sw2"><span>التفسير بدون إنترنت</span><button class="btn" id="tafDl">تنزيل التفسير الميسّر كاملًا</button></div>
   </div>
@@ -532,6 +555,29 @@ function closeInfo(){$('#infoSheet').classList.remove('on')}
 $('#infoBtn').onclick=openInfo;
 $('#infoClose').onclick=()=>{closeInfo();closeSheet()};
 
+/* ---------- أحكام التجويد ---------- */
+const HOV=matchMedia('(hover:hover) and (pointer:fine)').matches;
+const tjMode=()=>{let m=S.tj||((APP||!HOV)?'off':'hover');if(m==='hover'&&!HOV)m='off';return m};
+const TJ={},TJN=new Set(['ham_wasl','slnt','laam_shamsiyah','madda_normal','madda_permissible','madda_necessary','madda_obligatory','qalaqah','ikhafa_shafawi','ikhafa','idgham_shafawi','iqlab','idgham_ghunnah','idgham_wo_ghunnah','idgham_mutajanisayn','idgham_mutaqaribayn','ghunnah']);
+function tjHtml(src){const d=new DOMParser().parseFromString('<b>'+src+'</b>','text/html').body.firstChild;
+  const walk=n=>[...n.childNodes].map(c=>{if(c.nodeType===3)return esc(c.textContent);if(c.nodeType!==1)return'';const t=c.tagName.toLowerCase(),k=c.getAttribute('class')||'';
+    if(t==='span'&&k==='end')return'';if(t==='tajweed'&&TJN.has(k))return `<span class="tj tj-${k}">${walk(c)}</span>`;return walk(c)}).join('');
+  return walk(d).trim()}
+async function getTj(s){if(TJ[s])return TJ[s];const r=await fetch('https://api.quran.com/api/v4/quran/verses/uthmani_tajweed?chapter_number='+s);if(!r.ok)throw new Error('http');const j=await r.json();
+  const a=[];for(const v of j.verses){const n=+String(v.verse_key).split(':')[1];a[n-1]=tjHtml(v.text_uthmani_tajweed)}return TJ[s]=a}
+function applyTj(){const m=tjMode(),box=$('#verses'),on=m!=='off'&&!S.hide;
+  box.classList.toggle('tjon',on&&m==='on');box.classList.toggle('tjhov',on&&m==='hover');$('#tjLeg').hidden=!on;
+  $('#tjBtn').textContent='التجويد: '+({off:'مخفي',on:'ظاهر',hover:'بالماوس'})[m];$('#tjBtn').className='btn'+(m!=='off'?' gold':'');
+  $$('#tjSeg button').forEach(b=>{b.classList.toggle('on',b.dataset.k===m);if(b.classList.contains('hovOnly'))b.hidden=!HOV});
+  if(!on||!cur)return;const s=cur;if(box.dataset.tj==String(s))return;
+  getTj(s).then(a=>{if(cur!==s||box.dataset.tj==String(s))return;box.dataset.tj=s;
+    box.querySelectorAll('.ay').forEach(el=>{const h=a[+el.dataset.a-1];const an=el.querySelector('.an');if(h&&an)an.insertAdjacentHTML('beforebegin','<span class="tjx">'+h+'</span>')})
+  }).catch(()=>{if(tjMode()!=='off')toast('تعذّر تحميل ألوان التجويد، تحقق من الإنترنت')})}
+function setTj(m){S.tj=m;save();applyTj();if(typeof renderMore==='function'&&$('#tjSeg'))$$('#tjSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===m))}
+$('#tjBtn').onclick=()=>{const order=HOV?['off','hover','on']:['off','on'];const m=order[(order.indexOf(tjMode())+1)%order.length];setTj(m);
+  toast(m==='off'?'تم إخفاء ألوان التجويد':m==='on'?'ألوان التجويد ظاهرة':'مرّر الماوس على الآية لتظهر ألوان التجويد')};
+$('#tjSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;setTj(b.dataset.k);toast('تم الحفظ')};
+
 /* ---------- reader ---------- */
 async function openSura(s,a){
   s=Math.min(114,Math.max(1,s));cur=s;const c=Q[s-1];
@@ -551,6 +597,7 @@ async function openSura(s,a){
     const t=tr&&tr[v.id-1]?(S.lang==='tl'?tr[v.id-1].transliteration:tr[v.id-1].translation):'';
     return (jz>=0?`<span class="juz">— بداية الجزء ${ar(jz+1)} —</span>`:'')+`<span class="ay" id="a-${v.id}" data-a="${v.id}"><span class="f">${esc(first)}</span> <span class="rest">${esc(w.join(' '))}</span><span class="an">${ar(v.id)}</span>${t?`<span class="tr" dir="${['ur'].includes(S.lang)?'rtl':'ltr'}">${esc(t)}</span>`:''}</span> `;
   }).join('');
+  delete box.dataset.tj;applyTj();
   $('#hideBtn').setAttribute('aria-pressed',S.hide);$('#hideBtn').className='btn'+(S.hide?' gold':'');$('#hideHint').hidden=!S.hide;
   $('#prevS').disabled=s===1;$('#nextS').disabled=$('#nextS2').disabled=s===114;
   if(!S.last||S.last.s!==s){S.last={s,a:a||1};save();}
@@ -788,7 +835,7 @@ document.addEventListener('click',async e=>{
 });
 function renderMore(){
   applyTheme();renderInstall();
-  $('#wRow').hidden=!APP;$$('#wSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===(S.wStyle||'solid')));
+  $('#wRow').hidden=!APP;$$('#tjSeg button').forEach(b=>{b.classList.toggle('on',b.dataset.k===tjMode());if(b.classList.contains('hovOnly'))b.hidden=!HOV});$$('#wSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===(S.wStyle||'solid')));
   $('#mWird').textContent=S.plan?ar(S.plan.days)+' يومًا':'';
   $('#mHifz').textContent=ar(Object.values(S.hifz).filter(Boolean).length)+' سورة';
   applyFs();
