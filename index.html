@@ -1309,7 +1309,7 @@ const MUS=['المقدمة','الإيمان','الطهارة','الحيض','ال
 const MUS_G=[['العقيدة والعلم',[0,1,46,47]],['الطهارة',[2,3]],['الصلاة',[4,5,6,7,8,9,10]],['الجنائز والزكاة',[11,12]],['الصيام والحج',[13,14,15]],['الأسرة',[16,17,18,19]],['المعاملات والفرائض',[20,21,22,23,24,25]],['الأيمان والحدود والقضاء',[26,27,28,29,30,31]],['الجهاد والإمارة',[32,33]],['الطعام والشراب واللباس',[34,35,36,37]],['الآداب والأخلاق',[38,39,40,41,42,45]],['الفضائل والمناقب',[43,44]],['الذكر والرقائق والتوبة',[48,49,50,55]],['الآخرة والفتن',[51,52,53,54]],['التفسير',[56]]];
 let hdC='nawawi',hdSec=null,hdQ='',hdN=40;const HDC={};
 async function hdLoad(url){if(HDC[url])return HDC[url];const r=await fetch(url);if(!r.ok)throw new Error('http');return HDC[url]=await r.json()}
-function hdSplit(t){const m=t.match(/^([\s\S]{0,600}?(?:قَالَ|قال)[^:،]{0,40}?(?:صلى الله عليه وسلم|ﷺ)[^:،]{0,12}[:،]?\s*)([\s\S]+)$/);return m&&m[2].length>20?`<span class="isn">${esc(m[1])}</span><span class="mt">${esc(m[2])}</span>`:esc(t)}
+function hdSplit(t){return esc(t)}
 function hdCard(h,title){return `<div class="hd"><div class="hn"><span>${title?esc(title):'حديث رقم '+ar(h.hadithnumber)}</span><span class="muted" style="font-weight:400">${ar(h.hadithnumber)}</span></div><div class="ht">${hdSplit(h.text)}</div></div>`}
 async function renderHd(){
   $$('#hdSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===hdC));
