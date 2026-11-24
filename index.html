@@ -438,38 +438,32 @@ function renderIndex(){
 }
 
 /* ---------- Quran topics (الموسوعة القرآنية quranpedia.net) ---------- */
-const TOPICS_URL='https://quranpedia.net/dumps/topics.json.gz';
+const TOPICS_URL='data/topics.json.gz';
 let TP=null,TPload=null,tState={cat:null,grp:null,top:null};
-const CATS=[
- ['العقيدة والإيمان',/الله جلّ جلاله|أسماء اللَه الحسنى|التوحيد|الإيمان|الملائكة|الوحي|القدر|الشرك|الألوهية|الربوبية/],
- ['العبادات',/الصلاة|الصَّوم|الصوم|الصيام|الحَج|الحج$|الزكاة|العمرة|الذّكْر|الدعاء|الصدقة|الطهارة|الوضوء|المسجد/],
- ['الحلال والحرام',/الحلال|الحرام$|الرِّبا|الربا|الخمر|الميسر|الزنا|السرقة|التحريم|المحرمات|الحدود|الكفارة|الأطعمة|الاكل/],
- ['الأخلاق والآداب',/الصدق|الأمانة|الصبر|العدل|الإحسان|الكِبْر|الكبر|الغيبة|الحسد|التواضع|العفو|الحياء|الوفاء|الكذب|الظلم|بِر الوالدين|الشكر|الرحمة|التقوى|الاستئذان|الأدب/],
- ['قصص الأنبياء',/عليه السلام|عليهما السلام|صلى الله عليه وسلم/],
- ['الأسرة والمرأة',/النكاح|الزواج|الطلاق|الميراث|المواريث|الأبوة|الأمومة|الأسرة|اليتيم|المرأة|الرضاع|العِدّة|العدة/],
- ['المال والمعاملات',/المال|البَيْع|البيع|التجارة|الدَّيْن|الدين \[|القرض|النفقة|الإنفاق|الرزق|الوصية|العقود/],
- ['اليوم الآخر',/الجنة|النار|الجحيم|القيامة|اليوم الآخر|البعث|الحساب|الميزان|الصراط|القبر|الموت/],
- ['الجهاد والمجتمع',/الجهاد|القتال|الشورى|الحكم|الأمر بالمعروف|السلم|الصلح|المنافق|النفاق/],
- ['الكون والآيات',/السماء|الأرض|الشمس|القمر|الليل والنهار|الماء|الجبال|البحر|الرياح|النجوم|الخلق$/]
+const CATW=[
+ ['العقيدة والإيمان','الله جل جلاله|أسماء الله الحسنى|التوحيد|الإيمان|الملائكة|الوحي|القدر|الشرك|الألوهية|الربوبية|الغيب|الكفر|الإسلام|النبوة والأنبياء|الرسالة والرسل|القرآن|الكتاب|التوراة|الإنجيل|العبادة|اليقين|الشيطان|إبليس|أسماء الشيطان|الجن|صفات الملائكة|وحدانية الله|علم الله|محبة الله|رحمة الله|عدل الله|التوكل|التوكل على الله|الهداية|الضلال|الضلال والضالون|أسماء القرآن|الأنبياء عامة|المشركون|صفات الكافرين|صفات المؤمنين|الولي والأولياء|آيات الله'],
+ ['العبادات','الصلاة|الصوم|الصيام|رمضان|الحج|العمرة|الزكاة|الصدقة|الذكر|الدعاء|الطهارة|الوضوء|التيمم|المسجد|الطواف|الصفا|المروة|عرفات|المشعر الحرام|النسك|الاعتكاف|القصر|الهدي|التسبيح|الغفران والاستغفار|الاستغفار|التوبة|البيت|الكعبة|القبلة|الجمعة|قيام الليل|الأدعية|شكر الله|التلاوة|القنوت|الحمد'],
+ ['الحلال والحرام','الحلال|الحرام|التحريم|الربا|الخمر|الميسر|الزنا|السرقة|الحدود|الكفارة|الكفارات|الأطعمة|الاكل|الأكل|الذبح|الميتة|الخنزير|القتل|القصاص|الدية|الرشوة|الظهار|الإثم|الاثم|الفاحشة|الصيد|اليمين|الأيمان|النذر'],
+ ['الأخلاق والآداب','الصدق|الأمانة|الصبر|العدل|الإحسان|الكبر|الغيبة|الحسد|التواضع|العفو|الحياء|الوفاء|الكذب|الظلم|بر الوالدين|الشكر|الرحمة|التقوى|الاستئذان|الحلم|الرفق|الكرم|البخل|الغضب|النميمة|السخرية|التجسس|الحجاب|حجاب المرأة|الجيرة والجوار|الرأفة|المعروف|الخير|خفض الجناح|الإخلاص|الحق|الأدب|التكبر|الغرور|الفخر|الرياء|الإصلاح|السلام|اللغو|الكلمة الطيبة|الفساد|الفساد والافساد|البغي|العدوان|الهزء والاستهزاء|الإفك|الافك|الذنب|المعصية|السوء والسيئات|الحسنات و السيئات|الهوى|الغفلة|الحب|الخشية|الخوف'],
+ ['قصص الأنبياء','آدم|نوح|إبراهيم|إسماعيل|إسحاق|يعقوب|يوسف|موسى|هارون|داود|سليمان|أيوب|يونس|ذو النون|زكريا|يحيى|عيسى|المسيح|مريم|لوط|هود|صالح|شعيب|إدريس|ذو الكفل|إلياس|اليسع|لقمان|ذو القرنين|أصحاب الكهف|فرعون|قارون|بنو إسرائيل|أم موسى|فتى موسى|العبد الصالح|امرأة فرعون|مؤمن آل فرعون|السامري|هامان|خاتم الأنبياء|محمد|عاد|ثمود|مدين|أصحاب الأخدود|أصحاب الفيل',/عليه السلام|عليهما السلام|صلى الله عليه وسلم/],
+ ['الأسرة والمرأة','النكاح|الزواج|الطلاق|الميراث|المواريث|الأبوة والأمومة|الأسرة|اليتيم|اليتامى|المرأة|النساء|الرضاع|العدة|الولد والوالد|البنت والبنات|أحكام العلاقة|الزوج|الزوجة|زوجات النبي|المتعة والمتاع|الأولاد|الأخوة|الأرحام|الإيلاء|المهر|الصداق'],
+ ['المال والمعاملات','المال|البيع|التجارة|الدين|القرض|النفقة والانفاق|النفقة|الإنفاق|الرزق|الوصية|العقود|الكيل|الدرهم|الدينار|الذهب|الفضة|الغنيمة|الغنائم|الفيء|الكنز|الإسراف|التبذير|الشهادة|الكتابة|الرهن|الأجر|الكسب|المسكين|ابن السبيل|الشراء والبيع|الغنى'],
+ ['اليوم الآخر','الجنة|النار|الجحيم|جهنم|القيامة|اليوم الآخر|البعث|الحساب|الميزان|الصراط|القبر|الموت|الحشر|الساعة|العذاب|الثواب|الجزاء|الشفاعة|الحور|النعيم|الآخرة|الصور|الخلود|أسماء اليوم الآخر|القارعة|جزاء المؤمنين|جزاء الكافرين|حال الكافرين في النار|حال المؤمنين في الجنة|أسماء النار|أسماء الجنة|المنكرون للبعث|الصيحة'],
+ ['الجهاد والمجتمع','الجهاد|القتال|الشورى|الحكم|الأمر بالمعروف|السلم|الصلح|المنافقون|المنافق|النفاق|الهجرة والمهاجرون|الهجرة|غزوة|الأسرى|العهد|الولاء|الطاعة|الدعوة|الأمة|الفتنة|الشهداء|الشهيد|بنو إسرائيل|اليهود|النصارى|أهل الكتاب|علاقة المسلمين بغير|إطار العلاقة مع أهل الشرك|غزوات الرسول|النصر|صفا ت المنافقين|صفات المنافقين|المسلمون'],
+ ['الكون والآيات','السماء|السموات|الأرض|الشمس|القمر|الشمس والقمر|الليل والنهار|الماء|الجبال|البحر|الرياح|النجوم|الخلق|المطر|النبات|الشجر|الأنعام|الحيوان|النحل|الإنسان|الانسان|النهر|الطير|السحاب|البرق|الرعد|الزرع|الثمرات|خلق الأرض|خلق الإنسان|النخيل|الليل|النهار والليل|البحار|الثمر']
 ];
+const CATS=CATW.map(([n,w,x])=>{const ws=w.split('|').map(norm);return [n,{test:name=>{if(/نقيض الضلال|\[الرجل\]|المبنى الكبير/.test(name))return false;const k=norm(name).replace(/\s*\[.*$/,'').trim();return ws.some(v=>k===v||k.startsWith(v+' '))||(x?x.test(name):false)}}]});
 async function loadTopics(){
   if(TP)return TP;if(TPload)return TPload;
   TPload=(async()=>{
-    const r=await fetch(TOPICS_URL);if(!r.ok)throw new Error('http');
-    let txt;
-    const buf=await r.arrayBuffer();const u8=new Uint8Array(buf);
-    if(u8[0]===0x1f&&u8[1]===0x8b){
-      if(typeof DecompressionStream==='undefined')throw new Error('nogzip');
-      txt=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-    }else txt=new TextDecoder().decode(buf);
-    const j=JSON.parse(txt),T={},G={};
-    for(const row of j.data){for(const t of row.topics||[]){
-      if(!T[t.id]){T[t.id]={id:t.id,name:t.name,pid:t.parent?t.parent.id:null,pname:t.parent?t.parent.name:null,ay:(t.related_ayahs||'').split(',').filter(Boolean)};}
-      const k=String(t.parent?t.parent.id:t.id);
-      if(!G[k])G[k]={key:k,name:t.parent?t.parent.name:t.name,kids:new Set(),ay:new Set()};
-      G[k].kids.add(t.id);T[t.id].ay.forEach(a=>G[k].ay.add(a));
-    }}
-    TP={T,G:Object.values(G)};return TP;
+    const j=await gzJson(TOPICS_URL),T={},G={};
+    for(const id in j.T){const [name,pname,pid,ays]=j.T[id];
+      T[id]={id,name,pid:pid||null,pname:pname||null,ay:(ays||'').split(',').filter(Boolean)};
+      const k=norm(pname||name);
+      if(!G[k])G[k]={key:k,name:pname||name,kids:new Set(),ay:new Set()};
+      G[k].kids.add(id);T[id].ay.forEach(a=>G[k].ay.add(a));
+    }
+    TP={T,G:Object.values(G),v:j.v};return TP;
   })();
   try{return await TPload}catch(e){TPload=null;throw e}
 }
@@ -513,23 +507,25 @@ document.addEventListener('click',e=>{
 /* ---------- surah information (الموسوعة القرآنية) ---------- */
 const INFO_ORDER=[['introduction','نبذة عن السورة'],['topics','موضوعاتها'],['purposes','مقاصدها'],['grace','فضلها'],['asmaoha','أسماؤها'],['prophet','من هدي النبي ﷺ فيها'],['revelation','أسباب النزول']];
 const deAr=x=>+String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+let SI=null,SIload=null;
+async function gzJson(url){const r=await fetch(url);if(!r.ok)throw new Error('http');const buf=await r.arrayBuffer(),u8=new Uint8Array(buf);let txt;
+  if(u8[0]===0x1f&&u8[1]===0x8b){if(typeof DecompressionStream==='undefined')throw new Error('nogzip');txt=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text()}else txt=new TextDecoder().decode(buf);return JSON.parse(txt)}
+async function loadSI(){if(SI)return SI;if(!SIload)SIload=gzJson('data/surahs-info.json.gz').then(j=>SI=j).catch(e=>{SIload=null;throw e});return SIload}
 async function openInfo(){
   const s0=cur;$('#infoTitle').textContent='سورة '+Q[s0-1].name;$('#infoBody').innerHTML='<div class="loading"><div class="spin"></div></div>';
   $('#infoSheet').classList.add('on');$('#scrim').classList.add('on');document.body.classList.add('panel');$('#infoSheet').scrollTop=0;
-  let d=null;try{const r=await fetch('https://api.quranpedia.net/v1/surah/information/'+s0);if(r.ok)d=await r.json()}catch(e){}
+  let d=null,ver='';try{const j=await loadSI();d=j.S[s0];ver=j.v}catch(e){}
   if(cur!==s0)return;
   if(!d){$('#infoBody').innerHTML='<div class="empty">تعذّر تحميل معلومات السورة. يحتاج اتصالًا بالإنترنت أول مرة فقط.</div>';return}
-  const html=INFO_ORDER.filter(([k])=>d[k]&&d[k].value).map(([k,title])=>{
-    const doc=new DOMParser().parseFromString(String(d[k].value),'text/html');
-    let ps=[...doc.querySelectorAll('p')].map(p=>p.textContent.replace(/\s+/g,' ').trim()).filter(Boolean);
-    if(!ps.length)ps=[doc.body.textContent.trim()].filter(Boolean);
+  const html=INFO_ORDER.filter(([k])=>d[k]&&d[k].length).map(([k,title])=>{
+    const ps=d[k];
     const body=ps.map(p=>{
       if(k==='topics'){const m=p.match(/\(([٠-٩0-9]+)\s*[-–]\s*([٠-٩0-9]+)\)/);if(m)return `<p>${esc(p)}<button class="rng" data-go="s-${s0}-${deAr(m[1])}">اقرأ</button></p>`}
       return `<p${/^ينظر/.test(p)?' class="src"':''}>${esc(p)}</p>`}).join('');
     const long=k==='revelation'||k==='grace'||k==='prophet';
     return long?`<details><summary><h4 style="margin:0">${esc(title)}</h4></summary>${body}</details>`:`<h4>${esc(title)}</h4>${body}`;
   }).join('');
-  $('#infoBody').innerHTML=html+'<p class="src">المصدر: الموسوعة القرآنية — quranpedia.net (مركز أصول)، مع المراجع المذكورة تحت كل فقرة.</p>';
+  $('#infoBody').innerHTML=html+'<p class="src">المصدر: الموسوعة القرآنية — <a href="https://quranpedia.net" target="_blank" rel="noopener">quranpedia.net</a> (مركز أصول)، إصدار '+esc(ver)+'، مع المراجع المذكورة تحت كل فقرة.</p>';
 }
 function closeInfo(){$('#infoSheet').classList.remove('on')}
 $('#infoBtn').onclick=openInfo;
