@@ -1,9 +1,9 @@
 // عامل الخدمة: يجعل التطبيق يعمل بدون إنترنت بعد أول فتح
-const VERSION = 'v7';
+const VERSION = 'v9';
 const SHELL = `shell-${VERSION}`;
 const DATA = 'data-v1'; // نص المصحف والتفسير والترجمات والخطوط (لا تتغير)
 const SHELL_FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.png'];
-const DATA_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'api.alquran.cloud', 'static-cdn.tarteel.ai'];
+const DATA_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'api.alquran.cloud', 'static-cdn.tarteel.ai', 'quranpedia.net', 'api.quranpedia.net'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));
