@@ -10,9 +10,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="المصحف الميسّر">
+<meta name="apple-mobile-web-app-title" content="الوسيلة">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>المصحف الميسّر</title>
+<title>الوسيلة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preload" href="https://cdn.jsdelivr.net/gh/thetruetruth/quran-data-kfgqpc@main/hafs/font/hafs.18.woff2" as="font" type="font/woff2" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
@@ -34,7 +34,10 @@ button,select,input{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 header.top{background:var(--deep);color:var(--on);padding:max(14px,env(safe-area-inset-top)) max(5vw,16px,env(safe-area-inset-right)) 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
-header.top h1{font:600 22px/1.1 "Amiri",serif;margin:0;flex:1}
+header.top .brand{flex:1;line-height:1}
+@media(max-width:600px){#stat{display:none}}
+header.top h1{font:700 26px/1.1 "Amiri",serif;margin:0;color:var(--on)}
+header.top .tag{font:400 15px/1.6 "qpc-hafs","Amiri Quran",serif;color:var(--gold);margin-top:2px}
 header.top h1 span{color:var(--gold)}
 nav.tabs{position:fixed;inset:auto 0 0 0;background:var(--paper);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));z-index:6;padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;color:var(--mute);text-decoration:none;font-size:13px;min-height:56px}
@@ -165,7 +168,7 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
 </style>
 </head>
 <body>
-<header class="top"><h1>المصحف <span>الميسّر</span></h1><span class="muted" style="color:#cfd8d3" id="stat"></span><a href="#search" class="hbtn" aria-label="البحث في القرآن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></a></header>
+<header class="top"><div class="brand"><h1>الوسيلة</h1><div class="tag" id="tagline">وَابْتَغُوا إِلَيْهِ الْوَسِيلَةَ</div></div><span class="muted" style="color:#cfd8d3" id="stat"></span><a href="#search" class="hbtn" aria-label="البحث في القرآن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></a></header>
 <nav class="tabs" id="tabs">
 <a href="#home" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg>الرئيسية</a>
 <a href="#index" data-v="index"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-14c-3-.5-6 0-8 1.5zM12 6v14"/></svg>المصحف</a>
@@ -298,11 +301,11 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
   <div class="card" id="instCard"></div>
   <h3>عن التطبيق</h3>
   <div class="card">
-    <p style="margin-top:0"><b>المصحف الميسّر</b> — تطبيق مجاني صدقة جارية، بدون إعلانات ولا حسابات ولا تتبّع.</p>
+    <p style="margin-top:0"><b>الوسيلة</b> — تطبيق مجاني صدقة جارية، بدون إعلانات ولا حسابات ولا تتبّع.</p>
     <p class="muted"><b>نص المصحف:</b> الرسم العثماني من موسوعة القرآن الكريم (QuranEnc)، عبر حزمة quran-json المفتوحة.<br><b>التفسير:</b> التفسير الميسّر — مجمع الملك فهد لطباعة المصحف الشريف، عبر AlQuran Cloud.<br><b>الترجمات:</b> Tanzil.net وموسوعة القرآن الكريم.<br><b>الأذكار:</b> مختارة من «حصن المسلم»، والآيات فيها مأخوذة من نص المصحف نفسه.<br><b>الخصوصية:</b> كل بياناتك محفوظة على جهازك فقط.</p>
   </div>
 </section>
-<p class="note">المصحف الميسّر — مجاني بالكامل، بدون إعلانات. بياناتك محفوظة على جهازك فقط.</p>
+<p class="note">الوسيلة — مجاني بالكامل، بدون إعلانات. بياناتك محفوظة على جهازك فقط.</p>
 </main>
 
 <div class="scrim" id="scrim"></div>
@@ -386,7 +389,7 @@ function renderIndex(){
 /* ---------- reader ---------- */
 async function openSura(s,a){
   s=Math.min(114,Math.max(1,s));cur=s;const c=Q[s-1];
-  $('#rName').textContent='سورة '+c.name;document.title=c.name+' — المصحف الميسّر';
+  $('#rName').textContent='سورة '+c.name;document.title=c.name+' — الوسيلة';
   $('#rMeta').textContent=`${c.type==='meccan'?'مكية':'مدنية'} · ${ar(c.total_verses)} آية · الجزء ${ar(juzOf(s,1))}`;
   $('#basm').textContent=(s!==1&&s!==9)?Q[0].verses[0].text:'';
   $('#basm').className='qt basm';$('#basm').hidden=(s===1||s===9);
@@ -629,7 +632,7 @@ function installHtml(){
 function renderInstall(){
   if($('#instCard'))$('#instCard').innerHTML=installHtml();
   const show=!standalone()&&!S.instHide&&(deferredInstall||isIOS);
-  $('#instBanner').innerHTML=show?`<div class="banner"><div style="flex:1;min-width:200px">${deferredInstall?'ثبّت «المصحف الميسّر» على شاشتك الرئيسية — مجانًا وبدون متجر.':'على آيفون/آيباد: زر المشاركة ← «إضافة إلى الشاشة الرئيسية» لتثبيت التطبيق.'}</div><div class="row">${deferredInstall?'<button class="btn pri" data-install>تثبيت</button>':''}<button class="btn" data-insthide>لاحقًا</button></div></div>`:'';
+  $('#instBanner').innerHTML=show?`<div class="banner"><div style="flex:1;min-width:200px">${deferredInstall?'ثبّت «الوسيلة» على شاشتك الرئيسية — مجانًا وبدون متجر.':'على آيفون/آيباد: زر المشاركة ← «إضافة إلى الشاشة الرئيسية» لتثبيت التطبيق.'}</div><div class="row">${deferredInstall?'<button class="btn pri" data-install>تثبيت</button>':''}<button class="btn" data-insthide>لاحقًا</button></div></div>`:'';
 }
 document.addEventListener('click',async e=>{
   if(e.target.closest('[data-install]')&&deferredInstall){deferredInstall.prompt();try{await deferredInstall.userChoice}catch(err){}deferredInstall=null;renderInstall()}
@@ -742,6 +745,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)
     const r=await fetch(CDN+'quran.json');if(!r.ok)throw new Error('http');
     Q=await r.json();
     if(Q.length!==114)throw new Error('data');
+    try{const w=Q[4].verses[34].text.split(' '),i=w.findIndex(x=>norm(x).includes('تغو'));if(i>=0)$('#tagline').textContent=w.slice(i,i+3).join(' ')}catch(e){}
     let c=0;
     Q.forEach(ch=>ch.verses.forEach(v=>{c+=v.text.length;FLAT.push({s:ch.id,a:v.id,t:v.text,c,n:norm(v.text.replace(/ٰ/g,'')),n2:norm(v.text.replace(/ٰ/g,'ا'))})}));
     $('#load').remove();$('#stat').textContent=`${ar(Q.length)} سورة · ${ar(FLAT.length)} آية`;
