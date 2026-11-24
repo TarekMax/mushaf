@@ -117,6 +117,10 @@ header.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12
 /* reader */
 .rhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between;margin-bottom:12px}
 .rhead .rtitle{order:-1;flex:1 1 100%}
+.fsbox{display:flex;align-items:center;gap:6px;flex:1 1 100%;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px 6px}
+.fsbox .btn{min-width:44px;font-size:22px;line-height:1;padding:6px 10px}
+.fsbox input{flex:1;accent-color:var(--gold);height:32px}
+.fsbox span{min-width:3.2em;text-align:center;font-size:14px;color:var(--mute)}
 .rtitle{text-align:center;flex:1}
 .rtitle .nm{font:400 34px/1.2 "qpc-hafs","Amiri Quran",serif}
 .rtitle .muted{margin-top:2px}
@@ -224,7 +228,7 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
 <section id="v-read">
   <div class="rhead"><button class="btn" id="nextS" aria-label="السورة التالية">التالية ›</button><div class="rtitle"><div class="cart"><div class="cart-in"><div class="nm" id="rName"></div></div></div><div class="muted" id="rMeta"></div></div><button class="btn" id="prevS" aria-label="السورة السابقة">‹ السابقة</button></div>
   <div class="tools row">
-    <div class="seg"><button id="fsDn" aria-label="تصغير الخط">أ−</button><button id="fsUp" aria-label="تكبير الخط">أ+</button></div>
+    <div class="fsbox"><button class="btn" id="fsDn" aria-label="تصغير خط المصحف">−</button><input type="range" id="fsRange" min="16" max="48" step="1" aria-label="حجم خط المصحف"><button class="btn" id="fsUp" aria-label="تكبير خط المصحف">+</button><span id="fsVal"></span></div>
     <select id="lang" aria-label="الترجمة">
       <option value="">بدون ترجمة</option><option value="en">English — Saheeh Intl.</option><option value="fr">Français — Hamidullah</option><option value="es">Español — Isa García</option><option value="tr">Türkçe — Diyanet</option><option value="ur">اردو — مودودی</option><option value="id">Indonesia — Kemenag</option><option value="ru">Русский — Кулиев</option><option value="bn">বাংলা — Muhiuddin Khan</option><option value="zh">中文 — 马坚</option><option value="sv">Svenska — Bernström</option><option value="tl">نطق لاتيني (Transliteration)</option>
     </select>
@@ -351,7 +355,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const ar=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const JUZ=[[1,1],[2,142],[2,253],[3,93],[4,24],[4,148],[5,82],[6,111],[7,88],[8,41],[9,93],[11,6],[12,53],[15,1],[17,1],[18,75],[21,1],[23,1],[25,21],[27,56],[29,46],[33,31],[36,28],[39,32],[41,47],[46,1],[51,31],[58,1],[67,1],[78,1]];
 let Q=[],FLAT=[],S={},cur=1,trCache={},selA=0,idxMode='s',hMode='all';
-const def={last:null,marks:[],fs:28,lang:'',hide:false,plan:null,hifz:{},city:'cairo',custom:null,method:'',asr:1,adOn:false,adP:{fajr:1,dhuhr:1,asr:1,maghrib:1,isha:1},tas:0,read:'auto'};
+const def={last:null,marks:[],fs:(innerWidth<600?22:28),lang:'',hide:false,plan:null,hifz:{},city:'cairo',custom:null,method:'',asr:1,adOn:false,adP:{fajr:1,dhuhr:1,asr:1,maghrib:1,isha:1},tas:0,read:'auto'};
 try{S=Object.assign({},def,JSON.parse(localStorage.getItem('mushaf1')||'{}'))}catch(e){S=Object.assign({},def)}
 const APP=typeof window.WasilaAndroid!=='undefined';
 const syncApp=()=>{if(APP)try{WasilaAndroid.sync(JSON.stringify({city:S.city,custom:S.custom,method:S.method,asr:S.asr,adOn:S.adOn,adP:S.adP}))}catch(e){}};
@@ -412,7 +416,7 @@ async function openSura(s,a){
   $('#rMeta').textContent=`${c.type==='meccan'?'مكية':'مدنية'} · ${ar(c.total_verses)} آية · الجزء ${ar(juzOf(s,1))}`;
   $('#basm').textContent=(s!==1&&s!==9)?Q[0].verses[0].text:'';
   $('#basm').className='qt basm';$('#basm').hidden=(s===1||s===9);
-  document.body.style.setProperty('--fs',S.fs+'px');
+  applyFs();
   $('#lang').value=S.lang;
   let tr=null;
   if(S.lang){tr=await getTr(s,S.lang);if(cur!==s)return;}
@@ -634,7 +638,8 @@ function applyTheme(){
 }
 $('#themeBtn').onclick=()=>{S.read=THEMES[(THEMES.indexOf(S.read)+1)%THEMES.length];save();applyTheme()};
 $('#readSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.read=b.dataset.k;save();applyTheme()};
-const setFs=d=>{S.fs=Math.max(18,Math.min(48,S.fs+d));save();document.body.style.setProperty('--fs',S.fs+'px')};
+function applyFs(){document.body.style.setProperty('--fs',S.fs+'px');const r=$('#fsRange');if(r)r.value=S.fs;const v=$('#fsVal');if(v)v.textContent=ar(S.fs);const p=$('#fsPrev');if(p)p.style.fontSize=Math.min(S.fs,34)+'px'}
+const setFs=d=>{S.fs=Math.max(16,Math.min(48,S.fs+d));save();applyFs()};
 $('#fsUp2').onclick=()=>setFs(2);$('#fsDn2').onclick=()=>setFs(-2);
 $('#tafDl').onclick=async()=>{const b=$('#tafDl');b.disabled=true;b.textContent='جارٍ التنزيل…';const ok=await loadTafAll(true);b.disabled=false;b.textContent=ok?'التفسير متاح بدون إنترنت ✓':'تعذّر التنزيل — حاول مرة أخرى'};
 let deferredInstall=null;
@@ -737,8 +742,9 @@ $('#shMark').onclick=()=>{const i=S.marks.findIndex(m=>m.s===cur&&m.a===selA);if
 $('#shLast').onclick=()=>{S.last={s:cur,a:selA};save();toast('تم تحديد موضع القراءة');closeSheet()};
 $('#shCopy').onclick=async()=>{const v=Q[cur-1].verses[selA-1];try{await navigator.clipboard.writeText(`${v.text} ﴿${ar(selA)}﴾\n[${ref(cur,selA)}]`);toast('تم النسخ')}catch(e){toast('النسخ غير متاح هنا')}closeSheet()};
 $('#prevS').onclick=()=>go('s-'+(cur-1));$('#nextS').onclick=$('#nextS2').onclick=()=>go('s-'+(cur+1));
-$('#fsUp').onclick=()=>{S.fs=Math.min(48,S.fs+2);save();document.body.style.setProperty('--fs',S.fs+'px')};
-$('#fsDn').onclick=()=>{S.fs=Math.max(18,S.fs-2);save();document.body.style.setProperty('--fs',S.fs+'px')};
+$('#fsUp').onclick=()=>setFs(2);
+$('#fsDn').onclick=()=>setFs(-2);
+$('#fsRange').oninput=e=>{S.fs=+e.target.value;applyFs()};$('#fsRange').onchange=()=>save();
 $('#lang').onchange=e=>{S.lang=e.target.value;save();openSura(cur,0)};
 $('#hideBtn').onclick=()=>{S.hide=!S.hide;save();openSura(cur,0)};
 $('#idxQ').oninput=renderIndex;
@@ -756,7 +762,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
 addEventListener('hashchange',()=>show(location.hash.slice(1)));
 
 /* ---------- boot ---------- */
-applyTheme();document.body.style.setProperty('--fs',S.fs+'px');syncApp();
+applyTheme();applyFs();syncApp();
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
 (async()=>{
