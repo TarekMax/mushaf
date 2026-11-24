@@ -317,8 +317,10 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
   <div class="card">
     <div class="row" style="justify-content:space-between"><b id="adSt">التنبيه متوقف</b><button class="btn pri" id="adOn">تفعيل الأذان</button></div>
     <div class="row" id="adP" style="margin-top:8px"></div>
-    <div class="row" style="margin-top:8px"><label class="btn" for="adFile" style="display:inline-flex;align-items:center">اختر ملف أذان صوتي</label><input type="file" id="adFile" accept="audio/*" hidden><button class="btn" id="adTest">تجربة الصوت</button><span class="muted" id="adName"></span></div>
-    <p class="muted" style="margin-bottom:0">الأذان يعمل والتطبيق مفتوح أو في الخلفية، مع إشعار على الشاشة. لو ما اخترتش ملف أذان هتسمع نغمة تنبيه هادئة. للأذان والهاتف مقفول تمامًا استخدم نسخة أندرويد من Google Play.</p>
+    <div class="row" style="margin-top:10px"><span>صوت الأذان</span><select id="adV" aria-label="صوت الأذان" style="flex:1;min-width:160px"></select><button class="btn" id="adTest">تجربة</button></div>
+    <label class="sw" style="margin-top:10px"><input type="checkbox" class="chk" id="preOn"> تنبيه قبل كل أذان بـ ١٠ دقائق (صوت بيب متكرر)</label>
+    <div class="row" style="margin-top:6px"><button class="btn" id="fajrTest">تجربة أذان الفجر</button><button class="btn" id="preTest">تجربة صوت التنبيه</button><button class="btn" id="sndStop">إيقاف الصوت</button><span class="muted" id="adName"></span></div>
+    <p class="muted" style="margin-bottom:0">أذان الفجر يُرفع كاملًا بصوت الشيخ مشاري العفاسي، وباقي الصلوات تنبيه قصير (أول الأذان) بالصوت الذي تختاره. <span id="adNote"></span></p>
   </div>
 
   <h3>الدعاء بعد الأذان</h3>
@@ -407,7 +409,7 @@ let Q=[],FLAT=[],S={},cur=1,trCache={},selA=0,idxMode='s',hMode='all';
 const def={last:null,marks:[],fs:(innerWidth<600?22:28),lang:'',hide:false,plan:null,hifz:{},city:'cairo',custom:null,method:'',asr:1,adOn:false,adP:{fajr:1,dhuhr:1,asr:1,maghrib:1,isha:1},tas:0,read:'auto'};
 try{S=Object.assign({},def,JSON.parse(localStorage.getItem('mushaf1')||'{}'))}catch(e){S=Object.assign({},def)}
 const APP=typeof window.WasilaAndroid!=='undefined';
-const syncApp=()=>{if(APP)try{WasilaAndroid.sync(JSON.stringify({city:S.city,custom:S.custom,method:S.method,asr:S.asr,adOn:S.adOn,adP:S.adP,wStyle:S.wStyle||'solid'}))}catch(e){}};
+const syncApp=()=>{if(APP)try{WasilaAndroid.sync(JSON.stringify({city:S.city,custom:S.custom,method:S.method,asr:S.asr,adOn:S.adOn,adP:S.adP,adV:S.adV||'refaat',pre:!!S.pre,wStyle:S.wStyle||'solid'}))}catch(e){}};
 const save=()=>{try{localStorage.setItem('mushaf1',JSON.stringify(S))}catch(e){}syncApp()};
 const toast=t=>{const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),1800)};
 const juzOf=(s,a)=>{let j=1;JUZ.forEach((p,i)=>{if(s>p[0]||(s===p[0]&&a>=p[1]))j=i+1});return j};
@@ -679,7 +681,7 @@ function tick(){
   const cd=ar(H)+':'+ar(String(Mi).padStart(2,'0'))+':'+ar(String(Se).padStart(2,'0'));
   if($('#v-prayer').classList.contains('on')){$('#pNext').textContent=PN[nx]+' — '+fmtT(PT[nx]);$('#pCount').textContent=cd;$$('#pGrid [data-k]').forEach(x=>x.classList.toggle('nx',x.dataset.k===nx))}
   if($('#v-home').classList.contains('on'))$('#homePr').innerHTML=`<div><div class="muted">${esc(L.name)} · الصلاة القادمة</div><div style="font:600 22px 'Amiri'">${PN[nx]} ${fmtT(PT[nx])}</div></div><div class="big" style="font-size:28px">${cd}</div>`;
-  if(S.adOn&&!APP&&lastNow!=null)FIVE.forEach(k=>{if(S.adP[k]&&lastNow<PT[k]&&nh>=PT[k]&&nh-PT[k]<.05)fire(k,L)});
+  if(S.adOn&&!APP&&lastNow!=null)FIVE.forEach(k=>{if(!S.adP[k])return;if(lastNow<PT[k]&&nh>=PT[k]&&nh-PT[k]<.05)fire(k,L);const pt=PT[k]-1/6;if(S.pre&&lastNow<pt&&nh>=pt&&nh-pt<.05)firePre(k,L)});
   lastNow=nh;
 }
 const DUA_ADHAN='اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ';
@@ -702,7 +704,10 @@ function qibla(L){
   $('#qTxt').textContent='اتجاه القبلة من '+L.name+'، مقاسًا مع عقارب الساعة من الشمال الجغرافي. وجّه الهاتف للشمال ببوصلته ثم استدر بهذه الزاوية.';
 }
 /* adhan sound */
-let AC=null,adBuf=null,adRaw=null,snd=null;
+let AC=null,adBuf=null,adRaw=null,snd=null;const SBUF={};
+const VOICES=[['refaat','الشيخ محمد رفعت'],['basit','الشيخ عبد الباسط عبد الصمد'],['minshawi','الشيخ محمد صديق المنشاوي'],['mustafa','الشيخ مصطفى إسماعيل'],['shaisha','الشيخ أبو العينين شعيشع'],['afasy','الشيخ مشاري العفاسي'],['haram','أذان الحرم المكي']];
+async function sndBuf(name){if(SBUF[name])return SBUF[name];const ac=ensureAC();const r=await fetch('audio/'+name+'.mp3');if(!r.ok)throw new Error('http');return SBUF[name]=await ac.decodeAudioData(await r.arrayBuffer())}
+async function playFile(name){stopSnd();try{const b=await sndBuf(name);const src=AC.createBufferSource();src.buffer=b;src.connect(AC.destination);src.start();snd=src;return true}catch(e){return false}}
 function ensureAC(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
 async function decodeAd(){if(adRaw&&!adBuf&&ensureAC()){try{adBuf=await AC.decodeAudioData(adRaw.slice(0))}catch(e){toast('تعذّر قراءة ملف الصوت')}}}
 function stopSnd(){try{snd&&snd.stop()}catch(e){}snd=null}
@@ -713,16 +718,22 @@ function play(){
   [0,1.4,2.8].forEach(d=>[523.25,659.25,783.99].forEach((f,j)=>{const o=ac.createOscillator(),v=ac.createGain(),st=t+d+j*.2;o.frequency.value=f;o.connect(v);v.connect(g);v.gain.setValueAtTime(0,st);v.gain.linearRampToValueAtTime(.16,st+.04);v.gain.exponentialRampToValueAtTime(.001,st+1.2);o.start(st);o.stop(st+1.3)}));
   snd={stop(){g.disconnect()}};
 }
-function fire(k,L){$('#alName').textContent='أذان '+PN[k];$('#alCity').textContent='حسب توقيت '+L.name;$('#alert').classList.add('on');play();
+function fire(k,L){$('#alName').textContent='أذان '+PN[k];$('#alCity').textContent='حسب توقيت '+L.name;$('#alert').classList.add('on');playFile(k==='fajr'?'adhan_fajr':'adhan_'+(S.adV||'refaat')).then(ok=>{if(!ok)play()});
   try{if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker)navigator.serviceWorker.ready.then(r=>r.showNotification('حان الآن موعد أذان '+PN[k],{body:L.name+' — '+fmtT(PT[k]),icon:'icon-192.png',badge:'icon-192.png',tag:'adhan-'+k,renotify:true,vibrate:[300,150,300]}))}catch(e){}}
-function adUI(){$('#adSt').textContent=S.adOn?(APP?'الأذان مفعّل ويعمل والهاتف مقفول ✓':'التنبيه مفعّل ✓'):'التنبيه متوقف';$('#adOn').textContent=S.adOn?'إيقاف الأذان':'تفعيل الأذان';$('#adOn').className='btn'+(S.adOn?'':' pri');$('#adName').textContent=adRaw?'ملف أذان محفوظ ✓':''}
+function firePre(k,L){$('#alName').textContent='باقي ١٠ دقائق على أذان '+PN[k];$('#alCity').textContent='استعد للصلاة — '+L.name;$('#alert').classList.add('on');playFile('pre_beep').then(ok=>{if(!ok)play()});
+  try{if('Notification' in window&&Notification.permission==='granted'&&navigator.serviceWorker)navigator.serviceWorker.ready.then(r=>r.showNotification('باقي ١٠ دقائق على أذان '+PN[k],{body:L.name+' — الأذان '+fmtT(PT[k]),icon:'icon-192.png',badge:'icon-192.png',tag:'pre-'+k,renotify:true}))}catch(e){}}
+function adUI(){$('#adSt').textContent=S.adOn?(APP?'الأذان مفعّل ويعمل والهاتف مقفول ✓':'التنبيه مفعّل ✓'):'التنبيه متوقف';$('#adOn').textContent=S.adOn?'إيقاف الأذان':'تفعيل الأذان';$('#adOn').className='btn'+(S.adOn?'':' pri');$('#adV').innerHTML=VOICES.map(v=>`<option value="${v[0]}">${v[1]}</option>`).join('');$('#adV').value=S.adV||'refaat';$('#preOn').checked=!!S.pre;$('#adName').textContent='';$('#adNote').textContent=APP?'':'في المتصفح يعمل الأذان والتطبيق مفتوح أو في الخلفية؛ وللأذان والهاتف مقفول استخدم نسخة أندرويد.'}
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('mushaf',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function idbPut(k,v){const db=await idb();return new Promise(r=>{const tx=db.transaction('f','readwrite');tx.objectStore('f').put(v,k);tx.oncomplete=r;tx.onerror=r})}
 async function idbGet(k){const db=await idb();return new Promise(r=>{const q=db.transaction('f').objectStore('f').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}
 $('#alStop').onclick=()=>{stopSnd();$('#alert').classList.remove('on')};
 $('#adOn').onclick=()=>{S.adOn=!S.adOn;save();if(S.adOn){ensureAC();decodeAd();try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}catch(e){}}adUI()};
-$('#adTest').onclick=async()=>{ensureAC();await decodeAd();play();setTimeout(stopSnd,10000)};
-$('#adFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;adRaw=await f.arrayBuffer();adBuf=null;ensureAC();await decodeAd();try{await idbPut('adhan',adRaw)}catch(err){}adUI();toast('تم حفظ صوت الأذان')};
+$('#adTest').onclick=()=>{ensureAC();playFile('adhan_'+(S.adV||'refaat'))};
+$('#fajrTest').onclick=()=>{ensureAC();playFile('adhan_fajr');};
+$('#sndStop').onclick=()=>stopSnd();
+$('#preTest').onclick=()=>{ensureAC();playFile('pre_beep')};
+$('#adV').onchange=e=>{S.adV=e.target.value;save();ensureAC();playFile('adhan_'+S.adV)};
+$('#preOn').onchange=e=>{S.pre=e.target.checked;save();toast(S.pre?'تم تفعيل التنبيه قبل الأذان':'تم إيقاف التنبيه قبل الأذان')};
 $('#city').onchange=e=>{S.city=e.target.value;S.method='';save();renderPrayer()};
 $('#method').onchange=e=>{S.method=e.target.value;save();renderPrayer()};
 $('#asrM').onchange=e=>{S.asr=+e.target.value;save();renderPrayer()};
@@ -948,7 +959,6 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)
     $('#load').remove();$('#stat').textContent=`${ar(Q.length)} سورة · ${ar(FLAT.length)} آية`;
     show(location.hash.slice(1)||'home');renderInstall();
     tick();setInterval(tick,1000);
-    try{adRaw=await idbGet('adhan')||null}catch(e){}
   }catch(err){$('#load').innerHTML='<p>تعذّر تحميل نص المصحف. أول تشغيل يحتاج اتصالًا بالإنترنت، وبعدها يعمل التطبيق بدونه.</p><button class="btn pri" onclick="location.reload()">إعادة المحاولة</button>'}
 })();
 }
