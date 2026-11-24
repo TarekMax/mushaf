@@ -252,6 +252,18 @@ select{border-radius:12px}
 .thm button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);font-size:12.5px;min-height:76px}
 .thm button i{width:34px;height:34px;border-radius:50%;display:block;box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}
 .thm button.on{border-color:var(--gold);box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 40%,transparent)}
+
+/* ===== القراءة بملء الشاشة ===== */
+#zenX{display:none}
+body.zen{padding-bottom:0;background:var(--page)}
+body.zen header.top,body.zen nav.tabs,body.zen #v-read .rhead,body.zen #v-read .tools,body.zen #hideHint,body.zen #tjLeg,body.zen .banner,body.zen #toast:empty{display:none!important}
+body.zen main{max-width:none;padding:0;margin:0}
+body.zen .orn.page{margin:0;border-radius:0;min-height:100vh;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 12px max(12px,env(safe-area-inset-left));background:var(--page)}
+body.zen .orn.page::before,body.zen .orn.page::after{display:none}
+@media(min-width:900px){body.zen #verses,body.zen #basm{max-width:900px;margin-inline:auto}}
+body.zen #v-read>.row{padding:0 12px max(16px,env(safe-area-inset-bottom));background:var(--page);margin-top:0}
+body.zen #zenX{display:grid;place-items:center;position:fixed;z-index:20;bottom:max(14px,env(safe-area-inset-bottom));left:max(14px,env(safe-area-inset-left));width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 80%,transparent);color:var(--ink);opacity:.45;backdrop-filter:blur(6px);transition:opacity .2s}
+body.zen #zenX:hover,body.zen #zenX:focus-visible{opacity:1}
 </style>
 </head>
 <body>
@@ -302,6 +314,7 @@ select{border-radius:12px}
     <button class="btn" id="hideBtn" aria-pressed="false">وضع التسميع</button>
     <button class="btn" id="themeBtn">لون الصفحة</button>
     <button class="btn" id="tjBtn">التجويد</button>
+    <button class="btn" id="zenBtn" aria-label="القراءة بملء الشاشة"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>ملء الشاشة</button>
   </div>
   <p class="muted" id="hideHint" hidden>الآيات مخفية ما عدا أول كلمة — اضغط على الآية لإظهارها بعد ما تسمّعها.</p>
   <details id="tjLeg" hidden><summary>دليل ألوان أحكام التجويد</summary><div class="lg">
@@ -315,6 +328,7 @@ select{border-radius:12px}
   <div class="qt flow" id="verses"></div>
   </div>
   <div class="row" style="justify-content:center;margin-top:24px"><button class="btn pri" id="nextS2">السورة التالية</button></div>
+  <button id="zenX" aria-label="الخروج من ملء الشاشة"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
 </section>
 
 <section id="v-search">
@@ -453,6 +467,7 @@ const norm=t=>t.replace(/[ؐ-ًؚ-ٟۖ-ۭـ]/g,'').replace(/[ٱأإآ]/g,'ا').r
 
 /* ---------- views ---------- */
 function show(v){
+  if(document.body.classList.contains('zen')&&!/^(read|s-)/.test(v||''))setZen(false,true);
   if(!Q.length)return;
   let view=v,s=0;
   const m=/^s-(\d+)(?:-(\d+))?$/.exec(v);
@@ -614,6 +629,22 @@ $('#tjBtn').onclick=()=>{const order=HOV?['off','hover','on']:['off','on'];const
   toast(m==='off'?'تم إخفاء ألوان التجويد':m==='on'?'ألوان التجويد ظاهرة':'مرّر الماوس على الآية لتظهر ألوان التجويد')};
 $('#tjSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;setTj(b.dataset.k);toast('تم الحفظ')};
 
+
+/* ---------- القراءة بملء الشاشة ---------- */
+function setZen(on,fromPop){
+  if(on===document.body.classList.contains('zen'))return;
+  document.body.classList.toggle('zen',on);
+  if(APP){try{WasilaAndroid.immersive&&WasilaAndroid.immersive(on)}catch(e){}}
+  else{try{if(on&&document.documentElement.requestFullscreen&&!document.fullscreenElement)document.documentElement.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
+    else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}}
+  if(on){history.pushState({zen:1},'');toast('للخروج: زر الركن أو زر الرجوع')}
+  else if(!fromPop&&history.state&&history.state.zen)history.back();
+}
+$('#zenBtn').onclick=()=>setZen(true);
+$('#zenX').onclick=()=>setZen(false);
+addEventListener('popstate',()=>{if(document.body.classList.contains('zen'))setZen(false,true)});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('zen'))setZen(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('zen'))setZen(false)});
 /* ---------- reader ---------- */
 async function openSura(s,a){
   s=Math.min(114,Math.max(1,s));cur=s;const c=Q[s-1];
