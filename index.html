@@ -27,10 +27,17 @@
    PICTURE: نص المصحف نفسه هو الصورة؛ في الرئيسية بطاقة "آية اليوم" وحلقة تقدّم الختمة
    COLOUR and TYPE: أخضر زيتي عميق للأشرطة، أبيض الورق، ذهبي حادّ للتمييز؛ Amiri Quran للنص، Reem Kufi للعناوين، Plex Arabic للواجهة
    LAYOUT: عمود واحد للقراءة حتى 760px، شريط تنقّل سفلي على الهاتف وعلوي على الشاشات الواسعة */
-:root{color-scheme:light;--page:#EEF7FB;--band:#C9E4EF;--bandInk:#1E5F78;--bg:#FAF7F0;--paper:#FFFDF8;--ink:#1E2524;--mute:#5E6866;--deep:#1F4E4A;--gold:#A9843A;--line:#E6E0D2;--soft:#EFEBE0;--on:#F3EFE4;--navOn:#1F4E4A}
-@media (prefers-color-scheme:dark){:root:not([data-read]){color-scheme:dark;--page:#132029;--band:#1D3644;--bandInk:#A9D3E2;--bg:#111715;--paper:#19211F;--ink:#D5DDD8;--mute:#93A19C;--deep:#1D3D39;--gold:#D2B06A;--line:#26302D;--soft:#1E2826;--on:#E3EAE5;--navOn:#D2B06A}}
-:root[data-read=night]{color-scheme:dark;--page:#132029;--band:#1D3644;--bandInk:#A9D3E2;--bg:#111715;--paper:#19211F;--ink:#D5DDD8;--mute:#93A19C;--deep:#1D3D39;--gold:#D2B06A;--line:#26302D;--soft:#1E2826;--on:#E3EAE5;--navOn:#D2B06A}
-:root[data-read=sepia]{color-scheme:light;--page:#F8F0DE;--band:#E6D6B2;--bandInk:#6B5426;--bg:#F2E8D3;--paper:#F8F0DE;--ink:#3A2E1C;--mute:#6E604A;--deep:#2F4F45;--gold:#94702C;--line:#DDCFB2;--soft:#EADFC6;--on:#F6EEDC;--navOn:#2F4F45}
+:root{--th:#1F4E4A;--thG:#A9843A;--thGn:#D2B06A}
+:root[data-th=madina]{--th:#1B4A6B;--thG:#A8873C;--thGn:#D6B56E}
+:root[data-th=anbar]{--th:#5E1F2D;--thG:#B08A3C;--thGn:#D9B46C}
+:root[data-th=malaki]{--th:#3B2C63;--thG:#B0903F;--thGn:#D7B872}
+:root[data-th=raml]{--th:#5A4129;--thG:#B57A35;--thGn:#DDA35F}
+:root[data-th=kohli]{--th:#14213D;--thG:#C29B45;--thGn:#D9B66C}
+:root[data-th=fiddi]{--th:#2F3A40;--thG:#8C97A0;--thGn:#C3CCD2}
+:root{color-scheme:light;--page:#EEF7FB;--band:#C9E4EF;--bandInk:#1E5F78;--bg:#FAF7F0;--paper:#FFFDF8;--ink:#1E2524;--mute:#5E6866;--deep:var(--th);--gold:var(--thG);--line:#E6E0D2;--soft:#EFEBE0;--on:#F3EFE4;--navOn:var(--th)}
+@media (prefers-color-scheme:dark){:root:not([data-read]){color-scheme:dark;--page:#132029;--band:#1D3644;--bandInk:#A9D3E2;--bg:#111715;--paper:#19211F;--ink:#D5DDD8;--mute:#93A19C;--deep:color-mix(in srgb,var(--th) 64%,#0a0f0e);--gold:var(--thGn);--line:#26302D;--soft:#1E2826;--on:#E3EAE5;--navOn:var(--thGn)}}
+:root[data-read=night]{color-scheme:dark;--page:#132029;--band:#1D3644;--bandInk:#A9D3E2;--bg:#111715;--paper:#19211F;--ink:#D5DDD8;--mute:#93A19C;--deep:color-mix(in srgb,var(--th) 64%,#0a0f0e);--gold:var(--thGn);--line:#26302D;--soft:#1E2826;--on:#E3EAE5;--navOn:var(--thGn)}
+:root[data-read=sepia]{color-scheme:light;--page:#F8F0DE;--band:#E6D6B2;--bandInk:#6B5426;--bg:#F2E8D3;--paper:#F8F0DE;--ink:#3A2E1C;--mute:#6E604A;--deep:color-mix(in srgb,var(--th) 88%,#3a2e1c);--gold:color-mix(in srgb,var(--thG) 85%,#4a3008);--line:#DDCFB2;--soft:#EADFC6;--on:#F6EEDC;--navOn:color-mix(in srgb,var(--th) 88%,#3a2e1c)}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.75 "Noto Kufi Arabic",system-ui,sans-serif;overflow-x:clip;padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-tap-highlight-color:transparent}
 button,select,input{font:inherit;color:inherit}
@@ -222,6 +229,29 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
 #tjLeg{margin:6px 0 10px;font-size:13px}#tjLeg summary{cursor:pointer;color:var(--mute)}
 #tjLeg .lg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}#tjLeg .lg span{display:inline-flex;align-items:center;gap:6px}
 #tjLeg .lg i{width:12px;height:12px;border-radius:50%;display:inline-block;background:currentColor}
+
+/* ===== واجهة موحّدة: أزرار متساوية، ظلال هادئة، استجابة للّمس ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;font-size:14px;font-weight:500;line-height:1.2;border-radius:12px;border:1px solid var(--line);background:var(--paper);box-shadow:0 1px 2px rgba(0,0,0,.06);transition:transform .08s ease,background-color .15s,box-shadow .15s,border-color .15s;white-space:nowrap;text-align:center}
+.btn:hover{border-color:color-mix(in srgb,var(--deep) 35%,var(--line));background:color-mix(in srgb,var(--deep) 5%,var(--paper))}
+.btn.pri{background:var(--deep);color:var(--on);border-color:var(--deep)}
+.btn.pri:hover{background:color-mix(in srgb,var(--deep) 88%,#fff)}
+.btn.gold{background:var(--gold);color:#1b1404;border-color:var(--gold)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn:active,.sura:active,.zk:active,.tlist button:active,.seg button:active,.tcat button:active,.lnk:active,nav.tabs a:active,.tas:active{transform:scale(.97)}
+.sura,.zk,.tlist button,.tcat button,.lnk,nav.tabs a,.seg button{transition:transform .08s ease,background-color .15s,box-shadow .15s}
+.card,.sura,.zk,.tlist button,.hg{box-shadow:0 1px 2px rgba(0,0,0,.04),0 3px 12px rgba(0,0,0,.035)}
+:root[data-read=night] .card,:root[data-read=night] .sura,:root[data-read=night] .zk,:root[data-read=night] .btn{box-shadow:none}
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;padding:3px;border:0;border-radius:12px;background:var(--soft);overflow:visible}
+.seg button{border:0;border-radius:9px;min-height:40px;padding:0 14px;font-weight:500;background:none;white-space:nowrap}
+.seg button.on{background:var(--deep);color:var(--on);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.tools>.btn,.tools>select{flex:1 1 130px}
+.row.eq>.btn,.row.eq>select{flex:1 1 140px}
+.fsbox .btn{width:44px;min-width:44px;padding:0;font-size:22px}
+select{border-radius:12px}
+.thm{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;width:100%}
+.thm button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);font-size:12.5px;min-height:76px}
+.thm button i{width:34px;height:34px;border-radius:50%;display:block;box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}
+.thm button.on{border-color:var(--gold);box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 40%,transparent)}
 </style>
 </head>
 <body>
@@ -319,9 +349,9 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
   <div class="card">
     <div class="row" style="justify-content:space-between"><b id="adSt">التنبيه متوقف</b><button class="btn pri" id="adOn">تفعيل الأذان</button></div>
     <div class="row" id="adP" style="margin-top:8px"></div>
-    <div class="row" style="margin-top:10px"><span>صوت الأذان</span><select id="adV" aria-label="صوت الأذان" style="flex:1;min-width:160px"></select><button class="btn" id="adTest">تجربة</button></div>
+    <div class="row eq" style="margin-top:10px"><span>صوت الأذان</span><select id="adV" aria-label="صوت الأذان" style="flex:1;min-width:160px"></select><button class="btn" id="adTest">تجربة</button></div>
     <label class="sw" style="margin-top:10px"><input type="checkbox" class="chk" id="preOn"> تنبيه قبل كل أذان بـ ١٠ دقائق (صوت بيب متكرر)</label>
-    <div class="row" style="margin-top:6px"><button class="btn" id="fajrTest">تجربة أذان الفجر</button><button class="btn" id="preTest">تجربة صوت التنبيه</button><button class="btn" id="sndStop">إيقاف الصوت</button><span class="muted" id="adName"></span></div>
+    <div class="row eq" style="margin-top:6px"><button class="btn" id="fajrTest">تجربة أذان الفجر</button><button class="btn" id="preTest">تجربة صوت التنبيه</button><button class="btn" id="sndStop">إيقاف الصوت</button><span class="muted" id="adName"></span></div>
     <p class="muted" style="margin-bottom:0">أذان الفجر يُرفع كاملًا بصوت الشيخ مشاري العفاسي، وباقي الصلوات تنبيه قصير (أول الأذان) بالصوت الذي تختاره. <span id="adNote"></span></p>
   </div>
 
@@ -361,6 +391,8 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;c
   </div>
   <h3>الإعدادات</h3>
   <div class="card" style="padding:4px 16px">
+    <div class="sw2" style="display:block"><span>ثيم الألوان</span><div class="thm" id="thSeg" style="margin-top:10px"></div></div>
+    <div class="sw2"><span>استجابة اللمس</span><div class="seg" id="fbSeg"><button data-k="off">بدون</button><button data-k="vib">اهتزاز</button><button data-k="snd">صوت</button><button data-k="both">الاثنين</button></div></div>
     <div class="sw2"><span>لون الصفحة</span><div class="seg" id="readSeg"><button data-k="auto">تلقائي</button><button data-k="light">فاتح</button><button data-k="sepia">ورقي</button><button data-k="night">ليلي</button></div></div>
     <div class="sw2"><span>حجم خط المصحف</span><div class="fsbox"><button class="btn" id="fsDn2" aria-label="تصغير خط المصحف">−</button><input type="range" id="fsRange2" min="16" max="48" step="1" aria-label="حجم خط المصحف"><button class="btn" id="fsUp2" aria-label="تكبير خط المصحف">+</button><span id="fsVal2"></span></div></div>
     <div class="sw2"><span>ألوان أحكام التجويد</span><div class="seg" id="tjSeg"><button data-k="off">إخفاء</button><button data-k="on">إظهار</button><button data-k="hover" class="hovOnly">عند مرور الماوس</button></div></div>
@@ -826,6 +858,22 @@ document.addEventListener('click',e=>{
 });
 $('#zReset').onclick=()=>{delete zCnt[zCat];renderZk()};
 
+
+/* ---------- الثيمات واستجابة اللمس ---------- */
+const THS=[['zumurrud','زمردي','#1F4E4A','#A9843A'],['madina','أزرق المدينة','#1B4A6B','#A8873C'],['anbar','عنّابي','#5E1F2D','#B08A3C'],['malaki','بنفسجي ملكي','#3B2C63','#B0903F'],['raml','رملي','#5A4129','#B57A35'],['kohli','كحلي','#14213D','#C29B45'],['fiddi','فضي','#2F3A40','#8C97A0']];
+function applyTh(){const r=document.documentElement,t=S.th||'zumurrud';if(t==='zumurrud')r.removeAttribute('data-th');else r.setAttribute('data-th',t);
+  $('#thSeg').innerHTML=THS.map(x=>`<button data-th="${x[0]}" class="${x[0]===t?'on':''}" aria-label="ثيم ${x[1]}"><i style="background:linear-gradient(135deg,${x[2]} 0 62%,${x[3]} 62%)"></i>${x[1]}</button>`).join('');
+  $$('#fbSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===fbMode()));
+  requestAnimationFrame(()=>{const c=getComputedStyle($('header.top')).backgroundColor;let hx='#1f4e4a';try{const x=document.createElement('canvas').getContext('2d');x.fillStyle='#1f4e4a';x.fillStyle=c;if(/^#[0-9a-f]{6}$/i.test(x.fillStyle))hx=x.fillStyle;else{x.fillRect(0,0,1,1);const d=x.getImageData(0,0,1,1).data;hx='#'+[d[0],d[1],d[2]].map(n=>n.toString(16).padStart(2,'0')).join('')}}catch(e){}
+    document.querySelector('meta[name=theme-color]').content=hx;if(APP)try{WasilaAndroid.setBar&&WasilaAndroid.setBar(hx)}catch(e){}})}
+$('#thSeg').onclick=e=>{const b=e.target.closest('[data-th]');if(!b)return;S.th=b.dataset.th;save();applyTh();toast('ثيم '+THS.find(x=>x[0]===S.th)[1])};
+const fbMode=()=>S.fb||(APP?'vib':'off');
+let FBAC=null;
+function fbTick(){const m=fbMode();if(m==='off')return;
+  if(m==='vib'||m==='both'){try{if(APP&&WasilaAndroid.haptic)WasilaAndroid.haptic();else navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
+  if(m==='snd'||m==='both'){try{if(!FBAC)FBAC=new(window.AudioContext||window.webkitAudioContext)();if(FBAC.state==='suspended')FBAC.resume();const t=FBAC.currentTime,o=FBAC.createOscillator(),g=FBAC.createGain();o.type='sine';o.frequency.setValueAtTime(1500,t);o.frequency.exponentialRampToValueAtTime(900,t+.03);g.gain.setValueAtTime(.07,t);g.gain.exponentialRampToValueAtTime(.0001,t+.045);o.connect(g);g.connect(FBAC.destination);o.start(t);o.stop(t+.05)}catch(e){}}}
+document.addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.closest('button,a[href],[role=button],.zk,.sura,label.sw,summary'))fbTick()},{passive:true});
+$('#fbSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.fb=b.dataset.k;save();applyTh();fbTick()};
 /* ---------- theme / more / install / gps / compass ---------- */
 let QB=0;
 const THEMES=['auto','light','sepia','night'],TNAME={auto:'تلقائي',light:'فاتح',sepia:'ورقي',night:'ليلي'};
@@ -833,9 +881,10 @@ function applyTheme(){
   const r=document.documentElement;
   if(S.read==='auto')r.removeAttribute('data-read');else r.setAttribute('data-read',S.read);
   const dark=S.read==='night'||(S.read==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
-  document.querySelector('meta[name=theme-color]').content=dark?'#111715':'#1F4E4A';
+
   $('#themeBtn').textContent='لون الصفحة: '+TNAME[S.read];
   $$('#readSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.read));
+  if(typeof applyTh==='function'&&$('#thSeg'))applyTh();
 }
 $('#themeBtn').onclick=()=>{S.read=THEMES[(THEMES.indexOf(S.read)+1)%THEMES.length];save();applyTheme()};
 $('#wSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.wStyle=b.dataset.k;save();renderMore();toast('تم تغيير شكل الويدجت')};
