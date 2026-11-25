@@ -767,7 +767,11 @@ function setZen(on,fromPop){
 $('#zenBtn').onclick=()=>setZen(true);
 $('#setBtn').onclick=()=>{const r=$('#rset');r.hidden=!r.hidden;$('#setBtn').classList.toggle('on',!r.hidden);$('#setBtn').setAttribute('aria-expanded',!r.hidden)};
 $('#zenX').onclick=()=>setZen(false);
-addEventListener('popstate',()=>{if(document.body.classList.contains('zen'))setZen(false,true)});
+// سحب التقليب من حافة الشاشة قد يفهمه أندرويد كإيماءة «رجوع»: نتجاهلها أثناء التقليب ونبقى في نفس الصفحة والوضع
+let flipGestT=-1e9,hashSkip=-1e9;const flipGuard=()=>performance.now()-flipGestT<900;
+addEventListener('popstate',()=>{const z=document.body.classList.contains('zen');
+  if(curPage&&flipGuard()){hashSkip=performance.now();try{history.pushState(z?{zen:1}:null,'','#p-'+curPage)}catch(e){}return}
+  if(z){if(curPage){hashSkip=performance.now();try{history.replaceState(null,'','#p-'+curPage)}catch(e){}}setZen(false,true)}});
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('zen'))setZen(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('zen'))setZen(false)});
 
@@ -901,11 +905,11 @@ function flip(dir){
         simple=!pfCurl();if(simple){PF().classList.add('flipping');w=PF().offsetWidth||360;drag=true;x0=t.clientX}
         else{try{flipBusy=true;pfOpen(dir,-.2*yr)}catch(err){pfClose();x0=null;return}drag=true;x0=t.clientX}}
       else{if(Math.abs(dy)>14)x0=null;return}}
-    if(e.cancelable)e.preventDefault();
+    if(e.cancelable)e.preventDefault();flipGestT=performance.now();
     const now=performance.now();if(now>lt){v=.7*v+.3*(t.clientX-lx)/(now-lt)}lx=t.clientX;lt=now;
     if(simple){const p=Math.max(0,Math.min(1,(t.clientX-x0)*dir/w));oSet(PF(),p*88,dir,p*.5);return}
     const q=Math.max(0,Math.min(1,(t.clientX-x0)*dir/(PFS.W*.85)));pfDraw(dir>0?q:1-q)},{passive:false});
-  const end=e=>{if(x0==null)return;const ct=e&&e.changedTouches&&e.changedTouches[0],dx=ct?ct.clientX-x0:0;x0=null;if(!drag)return;drag=false;
+  const end=e=>{if(x0==null)return;if(drag)flipGestT=performance.now();const ct=e&&e.changedTouches&&e.changedTouches[0],dx=ct?ct.clientX-x0:0;x0=null;if(!drag)return;drag=false;
     if(simple){const el=PF(),p=dx*dir/w;
       if(p>.22||v*dir>.45){flipBusy=true;oSet(el,92,dir,.55,'transform .2s ease-in,--shade .2s');setTimeout(()=>{flipIn=dir;pgGo(curPage+dir)},190)}
       else{oSet(el,0,dir,0,'transform .3s cubic-bezier(.2,.8,.3,1)');setTimeout(()=>oReset(el),320)}return}
@@ -1607,7 +1611,7 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('click',e=>{if(e.target.id==='wReset'){S.plan=null;save();renderWird()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
-addEventListener('hashchange',()=>show(location.hash.slice(1)));
+addEventListener('hashchange',()=>{if(performance.now()-hashSkip<600){if(curPage&&location.hash!=='#p-'+curPage)try{history.replaceState(history.state,'','#p-'+curPage)}catch(e){}return}show(location.hash.slice(1))});
 
 /* ---------- boot ---------- */
 applyTheme();applyFs();syncApp();
