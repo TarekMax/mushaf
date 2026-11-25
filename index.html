@@ -574,6 +574,8 @@ const JUZ=[[1,1],[2,142],[2,253],[3,93],[4,24],[4,148],[5,82],[6,111],[7,88],[8,
 let Q=[],FLAT=[],S={},cur=1,trCache={},selA=0,idxMode='s',hMode='all';
 const def={last:null,marks:[],fs:(innerWidth<600?22:28),lang:'',hide:false,plan:null,hifz:{},city:'cairo',custom:null,method:'',asr:1,adOn:false,adP:{fajr:1,dhuhr:1,asr:1,maghrib:1,isha:1},tas:0,read:'auto'};
 try{S=Object.assign({},def,JSON.parse(localStorage.getItem('mushaf1')||'{}'))}catch(e){S=Object.assign({},def)}
+// المصحف يفتح افتراضيًا بعرض الصفحات والتقليب الناعم (مرة واحدة للمستخدمين الحاليين)
+if(!S.pgDef){S.pgDef=1;if(!S.lang)S.pg=true;if(!S.flip)S.flip='curl'}
 const APP=typeof window.WasilaAndroid!=='undefined';
 const syncApp=()=>{if(APP)try{WasilaAndroid.sync(JSON.stringify({city:S.city,custom:S.custom,method:S.method,asr:S.asr,adOn:S.adOn,adP:S.adP,adV:S.adV||'refaat',pre:!!S.pre,wStyle:S.wStyle||'solid'}))}catch(e){}};
 const save=()=>{try{localStorage.setItem('mushaf1',JSON.stringify(S))}catch(e){}syncApp()};
@@ -784,7 +786,7 @@ async function loadPages(){if(PAGES)return PAGES;
   try{localStorage.setItem('pages604',JSON.stringify(P))}catch(e){}return PAGES=P}
 const fIdx=(s,a)=>{if(!FIDX){FIDX={};FLAT.forEach((v,i)=>FIDX[v.s+':'+v.a]=i)}return FIDX[s+':'+a]};
 function pageOf(s,a){const P=PAGES;let lo=0,hi=603;while(lo<hi){const m=(lo+hi+1)>>1;const[ps,pa]=P[m];if(ps<s||(ps===s&&pa<=a))lo=m;else hi=m-1}return lo+1}
-async function openPageFor(s,a){try{await loadPages()}catch(e){toast('تقسيم الصفحات يحتاج اتصالًا بالإنترنت أول مرة');S.pg=false;save();curPage=0;openSura(s,a);return}
+async function openPageFor(s,a){try{await loadPages()}catch(e){toast('تقسيم الصفحات يحتاج اتصالًا بالإنترنت أول مرة');curPage=0;openSura(s,a);return}
   openPage(pageOf(s,a||1),a>1?{s,a}:null)}
 function pageInner(p){const P=PAGES;
   const i=fIdx(P[p-1][0],P[p-1][1]),j=p<604?fIdx(P[p][0],P[p][1]):FLAT.length;const first=FLAT[i],c=Q[first.s-1];
