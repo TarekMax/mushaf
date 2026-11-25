@@ -330,6 +330,7 @@ body.zen #zenX:hover,body.zen #zenX:focus-visible{opacity:1}
 .tbar{display:flex;justify-content:space-between;gap:6px;margin:0 0 10px;padding:6px;background:var(--soft);border-radius:14px}
 .tbar .ib{flex:1 1 0;width:auto;max-width:56px}
 .rset{margin-bottom:10px}
+.ib.lsel{position:relative;overflow:hidden}.ib.lsel select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;border:0;padding:0;margin:0;appearance:none}
 
 /* حركة تقليب الورق */
 #v-read .orn.page{position:relative;touch-action:pan-y;--shade:0}
@@ -395,13 +396,13 @@ body.zen #zenX:hover,body.zen #zenX:focus-visible{opacity:1}
     <button class="ib" id="hideBtn" aria-pressed="false" aria-label="وضع التسميع" title="وضع التسميع"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 6.2A9.6 9.6 0 0 1 12 6c5 0 9 6 9 6a16 16 0 0 1-2.6 3.1M6.6 6.6C4.4 8 3 12 3 12s4 6 9 6a8.6 8.6 0 0 0 4.4-1.2M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button>
     <button class="ib" id="themeBtn" aria-label="لون الصفحة" title="لون الصفحة"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
     <button class="ib" id="zenBtn" aria-label="القراءة بملء الشاشة" title="ملء الشاشة"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-    <button class="ib" id="setBtn" aria-label="حجم الخط والترجمة" aria-expanded="false" title="حجم الخط والترجمة"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+    <label class="ib lsel" id="langBtn" title="الترجمة"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h9M7.5 3v2M5 5c.9 3.2 3.2 5.8 6.2 7.2M10 5c-.9 3.2-3.2 5.8-6.4 7.4"/><path d="M12.5 21l4-9 4 9M14 17.6h5"/></svg><select id="lang" aria-label="الترجمة" title="الترجمة">
+      <option value="">بدون ترجمة</option><option value="en">English — Saheeh Intl.</option><option value="fr">Français — Hamidullah</option><option value="es">Español — Isa García</option><option value="tr">Türkçe — Diyanet</option><option value="ur">اردو — مودودی</option><option value="id">Indonesia — Kemenag</option><option value="ru">Русский — Кулиев</option><option value="bn">বাংলা — Muhiuddin Khan</option><option value="zh">中文 — 马坚</option><option value="sv">Svenska — Bernström</option><option value="tl">نطق لاتيني (Transliteration)</option>
+    </select></label>
+    <button class="ib" id="setBtn" aria-label="حجم الخط" aria-expanded="false" title="حجم الخط"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
   </div>
   <div class="tools row rset" id="rset" hidden>
     <div class="fsbox"><button class="btn" id="fsDn" aria-label="تصغير خط المصحف">−</button><input type="range" id="fsRange" min="16" max="48" step="1" aria-label="حجم خط المصحف"><button class="btn" id="fsUp" aria-label="تكبير خط المصحف">+</button><span id="fsVal"></span></div>
-    <select id="lang" aria-label="الترجمة">
-      <option value="">بدون ترجمة</option><option value="en">English — Saheeh Intl.</option><option value="fr">Français — Hamidullah</option><option value="es">Español — Isa García</option><option value="tr">Türkçe — Diyanet</option><option value="ur">اردو — مودودی</option><option value="id">Indonesia — Kemenag</option><option value="ru">Русский — Кулиев</option><option value="bn">বাংলা — Muhiuddin Khan</option><option value="zh">中文 — 马坚</option><option value="sv">Svenska — Bernström</option><option value="tl">نطق لاتيني (Transliteration)</option>
-    </select>
   </div>
   <p class="muted" id="hideHint" hidden>الآيات مخفية ما عدا أول كلمة — اضغط على الآية لإظهارها بعد ما تسمّعها.</p>
   <details id="tjLeg" hidden><summary>دليل ألوان أحكام التجويد</summary><div class="lg">
@@ -810,21 +811,24 @@ async function openPage(p,hl){
   $('#pgBtn').title='عرض السور';$('#pgBtn').classList.add('on');
   S.last={s:first.s,a:first.a};save();
   if(pfAfter){const f=pfAfter;pfAfter=null;requestAnimationFrame(()=>requestAnimationFrame(f))}else if(flipIn)flipInAnim();else if(!flipBusy)oReset(PF());
-  requestAnimationFrame(()=>{const el=hl&&$('#a-'+hl.s+'-'+hl.a);if(el){el.scrollIntoView({block:'center'});el.classList.add('sel');setTimeout(()=>el.classList.remove('sel'),2200)}else scrollTo(0,0)});
+  requestAnimationFrame(()=>{const el=hl&&$('#a-'+hl.s+'-'+hl.a);if(el){el.scrollIntoView({block:'center'});el.classList.add('sel');setTimeout(()=>el.classList.remove('sel'),2200)}else{scrollTo(0,pfScroll==null?0:pfScroll);pfScroll=null}});
 }
 $('#pgBtn').onclick=()=>{S.pg=!curPage;save();
   if(S.pg){let a=1;const vs=[...$$('#verses .ay')].find(e=>e.getBoundingClientRect().top>60);if(vs)a=+vs.dataset.a;openPageFor(cur,a);toast('عرض الصفحات كمصحف المدينة — اسحب يمينًا ويسارًا للتقليب')}
   else{const vs=[...$$('#verses .ay')].find(e=>e.getBoundingClientRect().top>60);const s0=vs?+vs.dataset.s:cur,a0=vs?+vs.dataset.a:1;curPage=0;go('s-'+s0+(a0>1?'-'+a0:''))}};
 /* تقليب الصفحات كورق المصحف الحقيقي: الصفحة تنطوي مع الإصبع وتظهر الصفحة الأخرى تحتها */
 const RM=matchMedia('(prefers-reduced-motion: reduce)');
-let flipBusy=false,pfAfter=null,PFS=null,flipIn=0;
+let flipBusy=false,pfAfter=null,PFS=null,flipIn=0,pfScroll=null;
+// الانتقال لصفحة أثناء التقليب: بدون إضافة للسجل (حتى لا يخرج من ملء الشاشة) ومع بقاء موضع القراءة
+function pgGo(np){const r=PF().getBoundingClientRect();pfScroll=Math.max(0,Math.min(scrollY,r.top+scrollY));
+  try{history.replaceState(history.state,'','#p-'+np)}catch(e){location.hash='p-'+np;return}show('p-'+np)}
 const pfCurl=()=>(S.flip||'curl')==='curl';
 /* الطريقة البسيطة (القديمة): الصفحة كلها تدور كلوح واحد */
 function oSet(el,deg,dir,shade,tr){el.style.transition=tr||'none';el.style.transformOrigin=dir>0?'right center':'left center';
   el.style.transform=`perspective(1600px) rotateY(${dir>0?-deg:deg}deg)`;el.style.setProperty('--shade',shade)}
 function oReset(el){el.style.transition='';el.style.transform='';el.style.transformOrigin='';el.style.setProperty('--shade',0);el.classList.remove('flipping')}
 function oFlip(dir,np){flipBusy=true;const el=PF();el.classList.add('flipping');
-  oSet(el,92,dir,.55,'transform .32s cubic-bezier(.45,.05,.75,.6),--shade .32s');setTimeout(()=>{flipIn=dir;go('p-'+np)},300)}
+  oSet(el,92,dir,.55,'transform .32s cubic-bezier(.45,.05,.75,.6),--shade .32s');setTimeout(()=>{flipIn=dir;pgGo(np)},300)}
 function flipInAnim(){const dir=flipIn;flipIn=0;const el=PF();if(!dir||RM.matches){oReset(el);flipBusy=false;return}
   el.classList.add('flipping');oSet(el,92,-dir,.45);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{oSet(el,0,-dir,0,'transform .42s cubic-bezier(.2,.75,.3,1),--shade .42s');setTimeout(()=>{oReset(el);flipBusy=false},450)}))}
@@ -845,7 +849,7 @@ const pfPoly=P=>P.length<3?'polygon(0 0,0 0,0 0)':'polygon('+P.map(p=>p[0].toFix
 // dir 1 = التالية (الورقة الحالية تنطوي)، -1 = السابقة (الورقة السابقة تعود فوق الحالية)
 function pfOpen(dir,th0){
   const np=curPage+dir,real=PF(),r=real.getBoundingClientRect(),vh=innerHeight,W=r.width;
-  const top0=r.top+scrollY; // مكان الصفحة الجديدة بعد الرجوع لأعلاها
+  const top0=Math.max(0,r.top); // مكان الصفحة الجديدة على الشاشة بعد التقليب (نفس موضع القراءة)
   const cur=pfClone(real),nw=pfClone(real,pageInner(np));
   const st=pfE('pfst'),S0=Math.max(0,Math.min(r.top,top0));
   st.style.cssText=`left:${r.left}px;top:${S0}px;width:${W}px;height:${vh-S0}px`;
@@ -879,13 +883,13 @@ function pfRun(to,commit,io){const z=PFS,t0=z.t,d=Math.abs(to-t0),dur=io?620:150
   const step=now=>{if(PFS!==z)return;const x=Math.min(1,(now-s0)/dur);pfDraw(t0+(to-t0)*pfEase(x,io));
     if(x<1){requestAnimationFrame(step);return}
     if(!commit){pfClose();return}
-    pfAfter=pfClose;setTimeout(()=>{if(PFS===z)pfClose()},1500);go('p-'+z.np)};
+    pfAfter=pfClose;setTimeout(()=>{if(PFS===z)pfClose()},1500);pgGo(z.np)};
   requestAnimationFrame(step)}
 function flip(dir){
   const np=curPage+dir;if(!curPage||np<1||np>604||flipBusy)return;
-  if(RM.matches){go('p-'+np);return}
+  if(RM.matches){pgGo(np);return}
   if(!pfCurl()){oFlip(dir,np);return}
-  flipBusy=true;try{pfOpen(dir,-.13);pfDraw(PFS.t);pfRun(dir>0?1:0,true,true)}catch(e){pfClose();go('p-'+np)}
+  flipBusy=true;try{pfOpen(dir,-.13);pfDraw(PFS.t);pfRun(dir>0?1:0,true,true)}catch(e){pfClose();pgGo(np)}
 }
 (()=>{let x0=null,y0=0,drag=false,dir=0,lx=0,lt=0,v=0,simple=false,w=1;const box=$('#v-read');
   box.addEventListener('touchstart',e=>{if(!curPage||flipBusy||e.touches.length>1||!e.target.closest('.orn')){x0=null;return}
@@ -903,7 +907,7 @@ function flip(dir){
     const q=Math.max(0,Math.min(1,(t.clientX-x0)*dir/(PFS.W*.85)));pfDraw(dir>0?q:1-q)},{passive:false});
   const end=e=>{if(x0==null)return;const ct=e&&e.changedTouches&&e.changedTouches[0],dx=ct?ct.clientX-x0:0;x0=null;if(!drag)return;drag=false;
     if(simple){const el=PF(),p=dx*dir/w;
-      if(p>.22||v*dir>.45){flipBusy=true;oSet(el,92,dir,.55,'transform .2s ease-in,--shade .2s');setTimeout(()=>{flipIn=dir;go('p-'+(curPage+dir))},190)}
+      if(p>.22||v*dir>.45){flipBusy=true;oSet(el,92,dir,.55,'transform .2s ease-in,--shade .2s');setTimeout(()=>{flipIn=dir;pgGo(curPage+dir)},190)}
       else{oSet(el,0,dir,0,'transform .3s cubic-bezier(.2,.8,.3,1)');setTimeout(()=>oReset(el),320)}return}
     if(!PFS){flipBusy=false;return}
     const q=dir>0?PFS.t:1-PFS.t,ok=q>.28||v*dir>.45||(q>.08&&v*dir>.25);
@@ -921,7 +925,7 @@ async function openSura(s,a){
   $('#basm').textContent=(s!==1&&s!==9)?Q[0].verses[0].text:'';
   $('#basm').className='qt basm';$('#basm').hidden=(s===1||s===9);
   applyFs();
-  $('#lang').value=S.lang;
+  $('#lang').value=S.lang;$('#langBtn').classList.toggle('on',!!S.lang);
   let tr=null;
   if(S.lang){tr=await getTr(s,S.lang);if(cur!==s)return;}
   const box=$('#verses');
@@ -1589,7 +1593,7 @@ $('#prevS').onclick=()=>curPage?flip(-1):go('s-'+(cur-1));$('#nextS').onclick=()
 $('#fsUp').onclick=()=>setFs(2);
 $('#fsDn').onclick=()=>setFs(-2);
 for(const id of ['#fsRange','#fsRange2']){$(id).oninput=e=>{S.fs=+e.target.value;applyFs()};$(id).onchange=()=>save()}
-$('#lang').onchange=e=>{S.lang=e.target.value;if(S.lang&&curPage){S.pg=false;curPage=0;toast('الترجمة تظهر في عرض السور')}save();openSura(cur,0)};
+$('#lang').onchange=e=>{S.lang=e.target.value;$('#langBtn').classList.toggle('on',!!S.lang);if(S.lang&&curPage){S.pg=false;curPage=0;toast('الترجمة تظهر في عرض السور')}save();openSura(cur,0)};
 $('#hideBtn').onclick=()=>{S.hide=!S.hide;save();if(curPage)openPage(curPage);else openSura(cur,0)};
 $('#idxQ').oninput=renderIndex;
 $('#idxSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;idxMode=b.dataset.k;$$('#idxSeg button').forEach(x=>x.classList.toggle('on',x===b));renderIndex()};

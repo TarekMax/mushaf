@@ -1,5 +1,5 @@
 // عامل الخدمة: يجعل التطبيق يعمل بدون إنترنت بعد أول فتح
-const VERSION = 'v26';
+const VERSION = 'v27';
 const SHELL = `shell-${VERSION}`;
 const DATA = 'data-v1'; // نص المصحف والتفسير والترجمات والخطوط (لا تتغير)
 const SHELL_FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.png'];
